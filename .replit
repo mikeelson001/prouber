@@ -1,0 +1,43 @@
+run = "php -S 0.0.0.0:8000 -t ."
+
+entrypoint = "index.php"
+
+[agent]
+expertMode = true
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 37231
+externalPort = 3000
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Server"
+
+[[workflows.workflow]]
+name = "Server"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "php -S 0.0.0.0:5000"
+waitForPort = 5000
+
+[deployment]
+deploymentTarget = "autoscale"
+run = ["php", "-S", "0.0.0.0:5000"]
+
